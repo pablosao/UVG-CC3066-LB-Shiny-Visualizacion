@@ -87,12 +87,16 @@ ui <- dashboardPage(
                             width = 15
                         ),
                         
-                        # PSAO / 31-05-2020 / Se colocan dos gráficas por columna
+                        h3("Cantidad de Casos Positivos a Nivel Mundial"),
+                        box(
+                            plotlyOutput("Gr_casos_nmundial", height = "400px"),
+                            width = 15
+                        ),
+                        
                         fluidRow(
-                            column(6,
-                                   # PSAO / 19-05-2020 / se cambia por grafica de plotly
-                                   plotlyOutput("Gsintomas_reportados", height = "400px")
-                            ),
+                            #column(6,
+                                   
+                            #),
                             
                             column(6,
                                    # PSAO / 02-06-2020 / Se agrega grafica de usuarios registrados
@@ -137,6 +141,29 @@ server <- function(input, output){
     
     output$cpm = DT::renderDataTable({
         data %>% filter(geoId == 'GT' )
+        
+    })
+    
+    # Se asigna libreria de plotly para graficas
+    output$Gr_casos_nmundial <- renderPlotly({
+        
+        # Se obtienen datos a graficar 
+        cantDeCasos <- aggregate(data[,3:4], list(data$countriesAndTerritories), mean)
+        
+        Gr_casos_nmundial <- plot_ly(
+            # dataset = cantDeSintomas
+            # x = sintomas
+            # y = cantidad reporta
+            cantDeCasos, x = ~Group.1, y = ~cases,type = "bar",
+            marker = list(
+                color = 'rgb(0,128,0)'
+            ) 
+        )
+        
+        # Seteamos el layout de la grafica
+        Gr_casos_nmundial <- Gr_casos_nmundial %>% layout(title = "",
+                                                                xaxis = list(title = "Países"),
+                                                                yaxis = list(title = "Cantidad de Personas Reportadas"))
     })
     
 
