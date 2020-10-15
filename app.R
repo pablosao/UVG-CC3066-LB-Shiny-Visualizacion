@@ -22,12 +22,15 @@ library(viridis)
 library(rworldmap)
 library(maps)
 library(ggmap)
-
+library(lubridate)
 
 
 
 data <- read.csv("owid-covid-data.csv") 
-
+# Seleccionando columnas
+data <- data %>% select(geoId,countriesAndTerritories,dateRep,cases,deaths)
+data %>%
+    mutate(dateRep = as.Date(dateRep, format= "%d/%m/%Y"))
 #View(data)
 
 
@@ -63,14 +66,25 @@ ui <- dashboardPage(
         tabItems(
             tabItem("general",
                     fluidPage(
+                        
                         #h1("General"),
                         #hr(),
                         # PSAO / 31-05-2020 / Se agrega filtro de rango de fechas
                         box(
                             dateRangeInput('RangoFechas',
                                            label = 'Rango de Fechas',
-                                           start = as.Date('2020-05-27') , end = as.Date('2020-05-31')
+                                           start = as.Date('2020-10-13') , 
+                                           end = as.Date('2020-10-14'),
+                                           format = "dd/mm/yyyy",
+                                           language = "es",
+                                           separator = " a "
                             ),
+                            width = 15
+                        ),
+                        
+                        h3("Tabla de Casos"),
+                        box(
+                            DT::dataTableOutput("cpm"),
                             width = 15
                         ),
                         
@@ -89,13 +103,9 @@ ui <- dashboardPage(
                         
                         # Cartograma
                         h1("Regiones"),
-                        plotlyOutput("p", height = "400px"),
+                        plotlyOutput("p", height = "400px")
                         
-                        h3("Casos por Municipio"),
-                        box(
-                            DT::dataTableOutput("cpm"),
-                            width = 15
-                        )
+                        
                         
                         
                     )
@@ -127,9 +137,9 @@ ui <- dashboardPage(
 server <- function(input, output){
     
     output$cpm = DT::renderDataTable({
-        data
+        data %>% filter(geoId == 'GT' )
     })
-
+    
 
 }
 
