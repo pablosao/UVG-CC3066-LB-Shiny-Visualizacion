@@ -10,7 +10,6 @@
 library(dplyr)
 library(shiny)
 library(shinydashboard)
-library(RPostgreSQL)
 library(DT)
 library(ECharts2Shiny)
 #install.packages("ini")
