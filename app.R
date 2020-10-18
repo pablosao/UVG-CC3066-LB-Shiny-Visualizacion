@@ -156,7 +156,7 @@ server <- function(input, output){
     output$Gr_casos_nmundial <- renderPlotly({
         
         # Se obtienen datos a graficar 
-        cantDeCasos <- aggregate(data[,3:4], list(data$countriesAndTerritories), mean)
+        cantDeCasos <- aggregate(data[,2:4], list(data$countriesAndTerritories), mean)
         
         Gr_casos_nmundial <- plot_ly(
             # dataset = cantDeSintomas
