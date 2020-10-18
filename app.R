@@ -92,6 +92,12 @@ ui <- dashboardPage(
                             plotlyOutput("Gr_casos_nmundial", height = "400px"),
                             width = 15
                         ),
+
+                        h3("Cantidad de Muertes a Nivel Mundial"),
+                        box(
+                            plotlyOutput("Gr_muertes_mundial", height = "400px"),
+                            width = 15
+                        ),
                         
                         fluidRow(
                             #column(6,
@@ -103,6 +109,8 @@ ui <- dashboardPage(
                                    plotlyOutput("Gregistro_sexo", height = "400px")
                             )
                         ),
+
+                        
                         
                         # Cartograma
                         h1("Regiones"),
@@ -164,6 +172,24 @@ server <- function(input, output){
         Gr_casos_nmundial <- Gr_casos_nmundial %>% layout(title = "",
                                                                 xaxis = list(title = "Países"),
                                                                 yaxis = list(title = "Cantidad de Personas Reportadas"))
+    })
+
+    output$Gr_muertes_mundial <- renderPlotly({
+
+        #obtener datos a graficar
+        cantDeMuertes <- aggregate(data[,4:5], list(data$countriesAndTerritories), mean)
+
+        Gr_muertes_mundial <- plot_ly(
+            cantDeMuertes, x = ~Group.1, y = ~deaths,type = "bar",
+            marker = list(
+                color = 'rgb(0,128,0)'
+            )
+        )
+
+        # Seteamos el layout de la grafica
+        Gr_muertes_mundial <- Gr_muertes_mundial %>% layout(title = "",
+                                                                xaxis = list(title = "Países"),
+                                                                yaxis = list(title = "Cantidad de muertes"))
     })
     
 
