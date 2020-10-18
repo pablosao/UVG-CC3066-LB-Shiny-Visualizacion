@@ -156,7 +156,7 @@ server <- function(input, output){
     output$Gr_casos_nmundial <- renderPlotly({
         
         # Se obtienen datos a graficar 
-        cantDeCasos <- aggregate(data[,2:4], list(data$countriesAndTerritories), mean)
+        cantDeCasos <- aggregate(data[,3:4], list(data$countriesAndTerritories), mean)
         
         Gr_casos_nmundial <- plot_ly(
             # dataset = cantDeSintomas
@@ -177,7 +177,7 @@ server <- function(input, output){
     output$Gr_muertes_mundial <- renderPlotly({
 
         #obtener datos a graficar
-        cantDeMuertes <- aggregate(data[,4:5], list(data$countriesAndTerritories), mean)
+        cantDeMuertes <- aggregate(data[,3:5], list(data$countriesAndTerritories), mean)
 
         Gr_muertes_mundial <- plot_ly(
             cantDeMuertes, x = ~Group.1, y = ~deaths,type = "bar",
