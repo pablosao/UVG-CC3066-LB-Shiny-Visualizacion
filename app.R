@@ -99,6 +99,18 @@ ui <- dashboardPage(
                             width = 15
                         ),
                         
+                        h3("Casos en Guatemala"),
+                        box(
+                            plotlyOutput("casos_guate", height = "400px"),
+                            width = 15
+                        ),
+
+                        h3("Muertes en Guatemala"),
+                        box(
+                            plotlyOutput("muertes_guate", height = "400px"),
+                            width = 15
+                        ),
+                        
                         fluidRow(
                             #column(6,
                                    
@@ -190,6 +202,43 @@ server <- function(input, output){
         Gr_muertes_mundial <- Gr_muertes_mundial %>% layout(title = "",
                                                                 xaxis = list(title = "Países"),
                                                                 yaxis = list(title = "Cantidad de muertes"))
+    })
+
+
+    output$muertes_guate <- renderPlotly({
+
+        #obtener datos a graficar
+        data_guate <- data %>% filter(geoId == 'GT' )
+
+        muertes_guate <- plot_ly(
+            data_guate, x = ~dateRep, y = ~deaths,type = "bar",
+            marker = list(
+                color = 'rgb(0,128,0)'
+            )
+        )
+
+        # Seteamos el layout de la grafica
+        muertes_guate <- muertes_guate %>% layout(title = "",
+                                                                xaxis = list(title = "Fechas"),
+                                                                yaxis = list(title = "Cantidad de muertes"))
+    })
+
+    output$casos_guate <- renderPlotly({
+
+        #obtener datos a graficar
+        data_guate <- data %>% filter(geoId == 'GT' )
+
+        casos_guate <- plot_ly(
+            data_guate, x = ~dateRep, y = ~cases,type = "bar",
+            marker = list(
+                color = 'rgb(0,128,0)'
+            )
+        )
+
+        # Seteamos el layout de la grafica
+        casos_guate <- casos_guate %>% layout(title = "",
+                                                                xaxis = list(title = "Fechas"),
+                                                                yaxis = list(title = "Cantidad de casos"))
     })
     
 
