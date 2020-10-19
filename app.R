@@ -110,6 +110,20 @@ ui <- dashboardPage(
                             plotlyOutput("muertes_guate", height = "400px"),
                             width = 15
                         ),
+						
+						h3("Casos en Afganistan"),
+                        box(
+                            plotlyOutput("casos_afganistan", height = "400px"),
+                            width = 15
+                        ),
+						
+						h3("Muertes en Afganistan"),
+                        box(
+                            plotlyOutput("muertes_afganistan", height = "400px"),
+                            width = 15
+                        ),
+						
+						
                         
                         fluidRow(
                             #column(6,
@@ -240,6 +254,44 @@ server <- function(input, output){
                                                                 xaxis = list(title = "Fechas"),
                                                                 yaxis = list(title = "Cantidad de casos"))
     })
+	
+	output$muertes_afganistan <- renderPlotly({
+
+        #obtener datos a graficar
+        data_afganistan <- data %>% filter(geoId == 'AF' )
+
+        muertes_afganistan <- plot_ly(
+            data_afganistan, x = ~dateRep, y = ~deaths,type = "bar",
+            marker = list(
+                color = 'rgb(0,128,0)'
+            )
+        )
+
+        # Seteamos el layout de la grafica
+        muertes_afganistan <- muertes_afganistan %>% layout(title = "",
+                                                                xaxis = list(title = "Fechas"),
+                                                                yaxis = list(title = "Cantidad de muertes"))
+    })
+	
+	output$casos_afganistan <- renderPlotly({
+
+        #obtener datos a graficar
+        data_afganistan <- data %>% filter(geoId == 'AF' )
+
+        casos_afganistan <- plot_ly(
+            data_afganistan, x = ~dateRep, y = ~deaths,type = "bar",
+            marker = list(
+                color = 'rgb(0,128,0)'
+            )
+        )
+
+        # Seteamos el layout de la grafica
+        casos_afganistan <- casos_afganistan %>% layout(title = "",
+                                                                xaxis = list(title = "Fechas"),
+                                                                yaxis = list(title = "Cantidad de muertes"))
+    })
+	
+	
     
 
 }
