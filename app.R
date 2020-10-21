@@ -38,8 +38,9 @@ ui <- dashboardPage(
     dashboardHeader(title= "Reportes COVID-19 UVG"),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("General", tabName = "general", icon = icon("chart-pie"))
-            #menuItem("Casos", tabName = "cases", icon = icon("caret-right")),
+            menuItem("General", tabName = "general", icon = icon("caret-right")),
+            menuItem("Casos", tabName = "casos", icon = icon("chart-pie"))
+            
             #menuItem("Afectados", tabName = "afected", icon = icon("caret-right")),
             #menuItem("Regiones", tabName = "regions", icon = icon("caret-right")),
             #menuItem("Sintomas Comunes", tabName = "symptoms", icon = icon("caret-right"))
@@ -63,7 +64,7 @@ ui <- dashboardPage(
         '))
         ),
         tabItems(
-            tabItem("general",
+            tabItem("casos",
                     fluidPage(
                         
                         #h1("General"),
@@ -111,13 +112,13 @@ ui <- dashboardPage(
                             width = 15
                         ),
 						
-						h3("Casos en Afganistan"),
+						            h3("Casos en Afganistan"),
                         box(
                             plotlyOutput("casos_afganistan", height = "400px"),
                             width = 15
                         ),
 						
-						h3("Muertes en Afganistan"),
+						            h3("Muertes en Afganistan"),
                         box(
                             plotlyOutput("muertes_afganistan", height = "400px"),
                             width = 15
@@ -137,21 +138,16 @@ ui <- dashboardPage(
                         ),
 
                         
+                    )
+            ),
+            tabItem("general",
+                    fluidPage(
+                      # Cartograma  
+                        h1("Mapa"),
                         
-                        # Cartograma
-                        h1("Regiones"),
-                        plotlyOutput("p", height = "400px")
-                        
-                        
-                        
-                        
+                        plotlyOutput("map", height = "400px")
                     )
             )
-            # tabItem("cases",
-            #         fluidPage(
-            #             h1("Casos")
-            #         )
-            # ),
             # tabItem("afected",
             #         fluidPage(
             #             h1("Afectados")
@@ -291,6 +287,49 @@ server <- function(input, output){
                                                                 yaxis = list(title = "Cantidad de muertes"))
     })
 	
+	  # Mapa
+	
+	output$map <- renderPlotly({
+	  
+	  
+	  
+	  # geo styling
+	  g <- list(
+	    scope = 'world',
+	    projection = list(type = 'kavrayskiy-vii'),
+	    showland = TRUE,
+	    landcolor = toRGB("gray85"),
+	    subunitcolor = 'rgb(0,128,0)',
+	    countrycolor = 'rgb(0,128,0)',
+	    countrywidth = 0.5,
+	    subunitwidth = 0.5
+	  )
+	  
+	  # data2 = variable donde estan todos los datos y la longitud y latitud
+	  # lat = se asigna la columna donde esta la latitud
+	  # lon = se asigna la columna donde esta la longitud
+	  #
+	  #
+	  
+	  fig <- plot_geo(data2, lat = ~lat, lon = ~lon)
+	  
+	  
+	  fig <- fig %>% add_markers(
+	    
+	    #
+	    # pais = se debe cambiar el nombre de la columna donde se encuentra el nombre del pais
+	    # casos = se debe cambiar el nombre de la columna donde se encuentra el total de casos
+	    #
+	    text = ~paste(paste("Pais:", pais),paste("Casos:", casos), sep = "<br />"), hoverinfo = "casos"
+	  )
+	  
+	  fig <- fig %>% colorbar(title = "Casos")
+	  fig <- fig %>% layout(
+	    title = 'Confirmados', geo = g
+	  )
+	  
+	  p <- ggplotly(fig, tooltip="text")
+	})
 	
     
 
