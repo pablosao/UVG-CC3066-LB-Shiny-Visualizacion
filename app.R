@@ -31,7 +31,19 @@ data <- read.csv("owid-covid-data.csv")
 data <- data %>% select(geoId,countriesAndTerritories,dateRep,cases,deaths)
 data %>%
     mutate(dateRep = as.Date(dateRep, format= "%d/%m/%Y"))
+
+datacoor <- read.csv("country.csv", sep=";")
+
+data2 <- data %>%
+  group_by(countriesAndTerritories) %>%
+  summarise(Casos = sum(cases))
+
+df = merge(x=data2,y=datacoor,by="countriesAndTerritories")
+
+
 #View(data)
+#View(datacoor)
+#View(df)
 
 
 ui <- dashboardPage(
@@ -144,7 +156,7 @@ ui <- dashboardPage(
             tabItem("general",
                     fluidPage(
                       # Cartograma  
-                        h1("Mapa"),
+                        h4("Mapa de Casos Reportados"),
                         
                         plotlyOutput("map", height = "400px")
                     )
@@ -299,7 +311,6 @@ server <- function(input, output){
 	output$map <- renderPlotly({
 	  
 	  
-	  
 	  # geo styling
 	  g <- list(
 	    scope = 'world',
@@ -312,32 +323,21 @@ server <- function(input, output){
 	    subunitwidth = 0.5
 	  )
 	  
-	  # data2 = variable donde estan todos los datos y la longitud y latitud
-      data2 <- read.csv("country-capitals.csv") 
-      data2 <- data2 %>% select(CountryName, CapitalName, CapitalLatitude, CapitalLongitude)
-	  # lat = se asigna la columna donde esta la latitud
-      lat <- data2 %>% select(CapitalLatitude)
-	  # lon = se asigna la columna donde esta la longitud
-	  lon <- data2 %>% select(CapitalLongitude)
-	  
-	  fig <- plot_geo(data2, lat = ~lat, lon = ~lon)
-	  
-	  
+	  fig <- plot_geo(df, lat = ~latitude, lon = ~longitude)
 	  fig <- fig %>% add_markers(
-	    
-	    #
-	    # pais = se debe cambiar el nombre de la columna donde se encuentra el nombre del pais
-	    # casos = se debe cambiar el nombre de la columna donde se encuentra el total de casos
-	    #
-	    text = ~paste(paste("Pais:", pais),paste("Casos:", casos), sep = "<br />"), hoverinfo = "casos"
+	    text = ~paste(paste("País:", countriesAndTerritories),paste("Cantidad Casos:", Casos), sep = "<br />"), hoverinfo = "Casos"
 	  )
-	  
-	  fig <- fig %>% colorbar(title = "Casos")
+	  fig <- fig %>% colorbar(title = "Cantidad de Casos")
 	  fig <- fig %>% layout(
-	    title = 'Confirmados', geo = g
+	    title = '', geo = g
 	  )
 	  
-	  p <- ggplotly(fig, tooltip="text")
+	  
+	  
+	  
+	  map <- ggplotly(fig, tooltip="text")
+	  
+	  
 	})
 	
     
