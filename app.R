@@ -12,9 +12,7 @@ library(shiny)
 library(shinydashboard)
 library(DT)
 library(ECharts2Shiny)
-#install.packages("ini")
 library(ini)
-#source("queryManager.R")
 library(plotly)
 library(leaflet)
 library(viridis)
@@ -22,6 +20,9 @@ library(rworldmap)
 library(maps)
 library(ggmap)
 library(lubridate)
+library(dash)
+library(dashCoreComponents)
+library(dashHtmlComponents)
 
 
 
@@ -234,21 +235,27 @@ server <- function(input, output){
     })
 
     output$casos_guate <- renderPlotly({
-
+        
+      
+      
         #obtener datos a graficar
         data_guate <- data %>% filter(geoId == 'GT' )
-
-        casos_guate <- plot_ly(
-            data_guate, x = ~dateRep, y = ~cases,type = "bar",
-            marker = list(
-                color = 'rgb(0,128,0)'
-            )
-        )
+        
+        casos_guate <- plot_ly(data_guate, x = ~dateRep)
+        casos_guate <- casos_guate %>% add_trace(y = ~cases, name = 'Casos Reportados',mode = 'lines+markers')
+        casos_guate <- casos_guate %>% add_trace(y = ~deaths, name = 'Muertes Reportadas',mode = 'lines+markers')
+        
+        #casos_guate <- plot_ly(
+        #    data_guate, x = ~dateRep, y = ~cases,mode = 'lines',
+        #    marker = list(
+        #        color = 'rgb(91, 188, 228)'
+        #    )
+        #)
 
         # Seteamos el layout de la grafica
         casos_guate <- casos_guate %>% layout(title = "",
-                                                                xaxis = list(title = "Fechas"),
-                                                                yaxis = list(title = "Cantidad de casos"))
+                                                        xaxis = list(title = "Fecha"),
+                                                        yaxis = list(title = "Cantidad de casos"))
     })
 	
 	output$muertes_afganistan <- renderPlotly({
@@ -257,14 +264,14 @@ server <- function(input, output){
         data_afganistan <- data %>% filter(geoId == 'AF' )
 
         muertes_afganistan <- plot_ly(
-            data_afganistan, x = ~dateRep, y = ~deaths,type = "bar",
+            data_afganistan, x = ~dateRep, y = ~deaths, mode = "lines",
             marker = list(
                 color = 'rgb(0,128,0)'
             )
         )
 
         # Seteamos el layout de la grafica
-        muertes_afganistan <- muertes_afganistan %>% layout(title = "",
+        muertes_afganistan <- muertes_afganistan %>% layout(title = "Casos y Muertes de Guatemala",
                                                                 xaxis = list(title = "Fechas"),
                                                                 yaxis = list(title = "Cantidad de muertes"))
     })
