@@ -306,10 +306,12 @@ server <- function(input, output){
 	  )
 	  
 	  # data2 = variable donde estan todos los datos y la longitud y latitud
+      data2 <- read.csv("country-capitals.csv") 
+      data2 <- data2 %>% select(CountryName, CapitalName, CapitalLatitude, CapitalLongitude)
 	  # lat = se asigna la columna donde esta la latitud
+      lat <- data2 %>% select(CapitalLatitude)
 	  # lon = se asigna la columna donde esta la longitud
-	  #
-	  #
+	  lon <- data2 %>% select(CapitalLongitude)
 	  
 	  fig <- plot_geo(data2, lat = ~lat, lon = ~lon)
 	  
